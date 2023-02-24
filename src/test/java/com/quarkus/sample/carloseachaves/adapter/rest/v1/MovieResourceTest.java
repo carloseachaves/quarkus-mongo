@@ -6,7 +6,10 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import org.junit.jupiter.api.Test;
 
+import javax.ws.rs.core.Response;
+
 import static io.restassured.RestAssured.given;
+import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.when;
 
@@ -31,11 +34,12 @@ class MovieResourceTest {
 
     @Test
     public void shouldReturnBadRequestWhenIdIsInvalid() {
-        String expectedBody = "BODY INVALID";
+        String expectedBody = "{\"message\":\"getById.id: el tamaño debe estar entre 8 y 8\",\"details\":[{\"path\":\"getById.id\",\"message\":\"el tamaño debe estar entre 8 y 8\"}]}";
         given()
-                .when().get("/v1/movies/1")
+                .when()
+                .get(format("/v1/movies/%s", "INVALID_ID"))
                 .then()
-                .statusCode(HttpResponseStatus.BAD_REQUEST.code())
+                .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .body(is(expectedBody));
     }
 

@@ -4,6 +4,7 @@ import com.quarkus.sample.carloseachaves.service.MovieService;
 import org.jboss.resteasy.reactive.RestPath;
 
 import javax.inject.Inject;
+import javax.validation.constraints.Size;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -18,7 +19,7 @@ public class MovieResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
-    public String getById(@RestPath String id) {
+    public String getById(@RestPath @Size(min= 8, max=8) String id) {
         return movieService.getById(id);
     }
 }
