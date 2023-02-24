@@ -1,5 +1,6 @@
 package com.quarkus.sample.carloseachaves.adapter.rest.v1;
 
+import com.quarkus.sample.carloseachaves.domain.entity.Movie;
 import com.quarkus.sample.carloseachaves.domain.exception.MovieNotFound;
 import com.quarkus.sample.carloseachaves.service.MovieService;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -25,9 +26,8 @@ class MovieResourceTest {
     @Test
     public void shouldReturnOkWithMovieBodyWhenValidRequest() throws TimeoutException {
         String movieId = "12345678";
-        String expectedBody = "{\"id\": \"12345678\", \"name\": \"carlos\"}";
-        String mockedResponse = "{\"id\": \"12345678\", \"name\": \"carlos\"}";
-        when(movieService.getById("12345678")).thenReturn(mockedResponse);
+        String expectedBody = "{\"id\":\"12345678\",\"name\":\"carlos\"}";
+        when(movieService.getById(movieId)).thenReturn(new Movie(movieId, "carlos"));
         given()
                 .when().get(format("/v1/movies/%s", movieId))
                 .then()
