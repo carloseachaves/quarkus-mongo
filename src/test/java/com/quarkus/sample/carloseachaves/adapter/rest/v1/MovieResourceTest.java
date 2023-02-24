@@ -59,11 +59,14 @@ class MovieResourceTest {
 
     @Test
     public void shouldReturnInternalServerErrorWhenUnknownErrorIsThrow() {
-        String expectedBody = "BODY NOT FOUND";
+        String expectedBody = "{\"message\":\"Unknown Error\"}";
+        String movieId = "12345678";
+        when(movieService.getById(movieId)).thenThrow(new RuntimeException("Unknown Error"));
+
         given()
-                .when().get("/v1/movies/1")
+                .when().get(format("/v1/movies/%s", movieId))
                 .then()
-                .statusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code())
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
                 .body(is(expectedBody));
     }
 
