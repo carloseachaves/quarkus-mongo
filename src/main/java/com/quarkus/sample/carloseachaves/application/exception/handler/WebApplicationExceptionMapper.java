@@ -1,4 +1,6 @@
-package com.quarkus.sample.carloseachaves.application.exception;
+package com.quarkus.sample.carloseachaves.application.exception.handler;
+
+import com.quarkus.sample.carloseachaves.application.exception.ResponseError;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
