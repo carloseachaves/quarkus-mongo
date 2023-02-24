@@ -12,10 +12,10 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
 
     @Override
     public Response toResponse(ConstraintViolationException e) {
-        List<ConstraintViolationsResponseError.Detail> errorMessages = e.getConstraintViolations().stream()
-                .map(constraintViolation -> new ConstraintViolationsResponseError.Detail(constraintViolation.getPropertyPath().toString(), constraintViolation.getMessage()))
+        List<ResponseError.Violation> errorMessages = e.getConstraintViolations().stream()
+                .map(constraintViolation -> new ResponseError.Violation(constraintViolation.getPropertyPath().toString(), constraintViolation.getMessage()))
                 .collect(Collectors.toList());
-        return Response.status(Response.Status.BAD_REQUEST).entity(new ConstraintViolationsResponseError(e.getMessage(), errorMessages)).build();
+        return Response.status(Response.Status.BAD_REQUEST).entity(new ResponseError(e.getMessage(), errorMessages)).build();
     }
 
 }
