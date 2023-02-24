@@ -8,6 +8,7 @@ import io.quarkus.test.junit.mockito.InjectMock;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.Response;
+import java.util.concurrent.TimeoutException;
 
 import static io.restassured.RestAssured.given;
 import static java.lang.String.format;
@@ -22,7 +23,7 @@ class MovieResourceTest {
     MovieService movieService;
 
     @Test
-    public void shouldReturnOkWithMovieBodyWhenValidRequest() {
+    public void shouldReturnOkWithMovieBodyWhenValidRequest() throws TimeoutException {
         String movieId = "12345678";
         String expectedBody = "{\"id\": \"12345678\", \"name\": \"carlos\"}";
         String mockedResponse = "{\"id\": \"12345678\", \"name\": \"carlos\"}";
@@ -46,7 +47,7 @@ class MovieResourceTest {
     }
 
     @Test
-    public void shouldReturnNotFoundWhenMovieIsNotFound() {
+    public void shouldReturnNotFoundWhenMovieIsNotFound() throws TimeoutException {
         String expectedBody = "{\"message\":\"Movie not found 12345678\"}";
         String movieId = "12345678";
         when(movieService.getById(movieId)).thenThrow(new MovieNotFound(movieId));
@@ -58,7 +59,7 @@ class MovieResourceTest {
     }
 
     @Test
-    public void shouldReturnInternalServerErrorWhenUnknownErrorIsThrow() {
+    public void shouldReturnInternalServerErrorWhenUnknownErrorIsThrow() throws TimeoutException {
         String expectedBody = "{\"message\":\"Unknown Error\"}";
         String movieId = "12345678";
         when(movieService.getById(movieId)).thenThrow(new RuntimeException("Unknown Error"));
@@ -71,12 +72,15 @@ class MovieResourceTest {
     }
 
     @Test
-    public void shouldReturnGatewayTimeoutWhenResponseIsTimedOut() {
-        String expectedBody = "BODY NOT FOUND";
+    public void shouldReturnGatewayTimeoutWhenResponseIsTimedOut() throws TimeoutException {
+        String expectedBody = "{\"message\":\"Timeout Error\"}";
+        String movieId = "12345678";
+        when(movieService.getById(movieId)).thenThrow(new TimeoutException("Timeout Error"));
+
         given()
-                .when().get("/v1/movies/1")
+                .when().get(format("/v1/movies/%s", movieId))
                 .then()
-                .statusCode(HttpResponseStatus.GATEWAY_TIMEOUT.code())
+                .statusCode(Response.Status.GATEWAY_TIMEOUT.getStatusCode())
                 .body(is(expectedBody));
     }
 
